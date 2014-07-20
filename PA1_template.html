@@ -151,79 +151,83 @@ hr {
 
 <h2>What is mean total number of steps taken per day?</h2>
 
-<h3>1. Make a histogram of the total number of steps taken each day</h3>
+<h3>Make a histogram of the total number of steps taken each day</h3>
 
 <pre><code>hist(data$steps)
 </code></pre>
 
-<p><img class=center src=fig/hist_steps.png></p>
+<p><img class=center src=figure/hist_steps.png></p>
 
-<h3>2. Calculate and report the mean and median total number of steps taken per day</h3>
+<h3>Calculate and report the mean and median total number of steps taken per day</h3>
 
 <pre><code>mean_steps = mean(data$steps, na.rm = TRUE)
 median_steps = median(data$steps, na.rm = TRUE)
 </code></pre>
 
+<p>The mean of and median total number of steps taken per day are 37.3826 and 0, resepectively.</p>
+
 <h2>What is the average daily activity pattern?</h2>
 
-<ul>
-<li><p>Make a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</p>
+<h3>Make a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</h3>
 
 <pre><code>library(doBy)
 mean2 &lt;- function(x){
-mean(x, na.rm = TRUE)
+  mean(x, na.rm = TRUE)
 }
 summarized_data = summaryBy(steps ~ interval, data = data, FUN = c(mean2))
 plot(x=summarized_data$interval, y=summarized_data$steps.mean2,type=&quot;l&quot;)
 </code></pre>
 
-<p><img class=center src=fig/time_series_1.png></p></li>
-<li><p>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</p>
+<p><img class=center src=figure/time_series_1.png></p>
+
+<h3>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</h3>
 
 <pre><code>summarized_data$interval[which.max(summarized_data$steps.mean2)]
-</code></pre></li>
-</ul>
+</code></pre>
 
 <h2>Imputing missing values</h2>
 
-<ul>
-<li><p>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</p>
+<h3>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</h3>
 
 <pre><code>sum(!complete.cases(data))
-</code></pre></li>
-<li><p>Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</p></li>
-<li><p>Create a new dataset that is equal to the original dataset but with the missing data filled in.</p>
+</code></pre>
+
+<h3>Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</h3>
+
+<h3>Create a new dataset that is equal to the original dataset but with the missing data filled in.</h3>
+
+<p>My strategy for filling in all of the missing values is to replace them with the median. I first checked which columns contain the missing values and found that only <code>steps</code> does. Therefore, I only dealt with the <code>steps</code> column and filled all the missing values with the median of <code>steps</code>, which is 0.</p>
 
 <pre><code>data_filled &lt;- data
 for( i in 1:nrow(data)){
-if( is.na(data$steps[i]) )
-data_filled$steps[i] &lt;- median_steps
+  if( is.na(data$steps[i]) )
+    data_filled$steps[i] &lt;- median_steps
 }
-</code></pre></li>
-<li><p>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</p>
+</code></pre>
+
+<h3>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</h3>
 
 <pre><code>hist(data_filled$steps)
 mean_steps_filled = mean(data_filled$steps, na.rm = TRUE)
 median_steps_filled = median(data_filled$steps, na.rm = TRUE)
 </code></pre>
 
-<p><img class=center src=fig/hist_steps_nona.png></p></li>
-</ul>
+<p>The mean and median total number of steps taken per day after dealing with the missing values are 32.47996 and 0, respectively.</p>
+
+<p><img class=center src=figure/hist_steps_nona.png></p>
 
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
 
-<ul>
-<li>Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
-<code>
-isWeekday &lt;- function(date){
-if (weekdays(as.Date(date)) == &quot;Saturday&quot; || weekdays(as.Date(date)) == &quot;Saturday&quot;)
-x &lt;- &quot;weekend&quot;
-else
-x &lt;- &quot;weekday&quot;
-return(x)
+<h3>Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</h3>
+
+<pre><code>isWeekday &lt;- function(date){
+  if (weekdays(as.Date(date)) == &quot;Saturday&quot; || weekdays(as.Date(date)) == &quot;Saturday&quot;)
+    x &lt;- &quot;weekend&quot;
+  else
+    x &lt;- &quot;weekday&quot;
+  return(x)
 }
-</code></li>
-</ul>
+</code></pre>
 
 <pre><code>weekdayWeekend &lt;- c()
 for (i in 1:nrow(data)){
@@ -232,21 +236,19 @@ for (i in 1:nrow(data)){
 data_filled &lt;- cbind(data_filled, weekdayWeekend)
 </code></pre>
 
-<ul>
-<li>Make a panel plot containing a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
-<code>
-summarized_data_filled = summaryBy(steps ~ interval + weekdayWeekend, data = data_filled, FUN = c(mean2))
+<h3>Make a panel plot containing a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</h3>
+
+<pre><code>summarized_data_filled = summaryBy(steps ~ interval + weekdayWeekend, data = data_filled, FUN = c(mean2))
 summarized_data_filled_weekday &lt;- subset(summarized_data_filled, weekdayWeekend == &quot;weekday&quot;)
 summarized_data_filled_weekend &lt;- subset(summarized_data_filled, weekdayWeekend == &quot;weekend&quot;)
-</code></li>
-</ul>
+</code></pre>
 
 <pre><code>par(mfrow=c(2,1))
 plot(summarized_data_filled_weekday$interval, summarized_data_filled_weekday$steps.mean2,type=&quot;l&quot;, xlab=&quot;interval&quot;, ylab=&quot;steps&quot;, main = &quot;weekday&quot;)
 plot(summarized_data_filled_weekend$interval, summarized_data_filled_weekend$steps.mean2,type=&quot;l&quot;, xlab=&quot;interval&quot;, ylab=&quot;steps&quot;, main = &quot;weekend&quot;)
 </code></pre>
 
-<p><img class=center src=fig/weekday_weekend_compare.png></p>
+<p><img class=center src=figure/weekday_weekend_compare.png></p>
 
 </body>
 
